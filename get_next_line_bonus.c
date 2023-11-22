@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
+/*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: skarim <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/11/20 17:53:49 by skarim            #+#    #+#             */
-/*   Updated: 2023/11/21 16:30:43 by skarim           ###   ########.fr       */
+/*   Created: 2023/11/17 18:41:26 by skarim            #+#    #+#             */
+/*   Updated: 2023/11/22 17:39:15 by skarim           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line_bonus.h"
+#include "get_next_line.h"
 
 char	*ft_read_file(int fd, char *first_res)
 {
@@ -93,22 +93,32 @@ char	*ft_get_rest(char *str)
 
 char	*get_next_line(int fd)
 {
-	static char	*res[OPEN_MAX];
+	static char	*res;
 	char		*line;
 	char		*tmp;
 
-	if (fd < 0 || BUFFER_SIZE <= 0 || fd > OPEN_MAX)
+	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
-	tmp = ft_read_file(fd, res[fd]);
+	tmp = ft_read_file(fd, res);
 	if (!tmp)
 	{
-		if (res[fd])
-			free(res[fd]);
-		res[fd] = NULL;
+		if (res)
+			free(res);
+		res = NULL;
 		return (NULL);
 	}
-	res[fd] = tmp;
-	line = ft_get_line(res[fd]);
-	res[fd] = ft_get_rest(res[fd]);
+	res = tmp;
+	line = ft_get_line(res);
+	res = ft_get_rest(res);
 	return (line);
+}
+#include <stdio.h>
+#include <fcntl.h>
+
+int main(void)
+{
+	int fd;
+
+	fd = open("test.txt", O_RDONLY);
+	printf("%s", get_next_line(fd));
 }
